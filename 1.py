@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QH
                              QLineEdit, QPushButton, QComboBox, QTableWidget, QTableWidgetItem,
                              QTabWidget, QFileDialog, QMessageBox, QTextEdit, QListWidget, QCheckBox,
                              QGroupBox, QHeaderView, QColorDialog, QStyledItemDelegate, QStyle)
-from PyQt5.QtCore import Qt, QDate
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor, QFont, QPalette
 import pandas as pd
 from sqlalchemy import create_engine, MetaData, Table, Column, inspect, text, PrimaryKeyConstraint, ForeignKeyConstraint
