@@ -4,7 +4,7 @@ import csv
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel,
                              QLineEdit, QPushButton, QComboBox, QTableWidget, QTableWidgetItem,
                              QTabWidget, QFileDialog, QMessageBox, QTextEdit, QListWidget, QCheckBox,
-                             QGroupBox, QHeaderView, QColorDialog, QStyledItemDelegate, QStyle)
+                             QGroupBox, QHeaderView, QColorDialog, QStyledItemDelegate, QStyle, QSizePolicy)
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor, QFont, QPalette
 import pandas as pd
@@ -208,8 +208,19 @@ class ETLApp(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("ETL Flow Manager")
-        self.setGeometry(100, 100, 1200, 900)
 
+        # Получаем размеры экрана
+        screen_geometry = QApplication.primaryScreen().availableGeometry()
+        max_width = screen_geometry.width() * 0.9  # 90% ширины экрана
+        max_height = screen_geometry.height() * 0.9  # 90% высоты экрана
+
+        # Устанавливаем начальный и максимальный размеры
+        self.setMinimumSize(800, 600)
+        self.setMaximumSize(int(max_width), int(max_height))
+
+        # Центрируем окно
+        center_point = screen_geometry.center()
+        self.move(center_point - self.rect().center())
         # Set application style
         self.setStyleSheet("""
             QMainWindow {
@@ -289,7 +300,7 @@ class ETLApp(QMainWindow):
 
     def init_ui(self):
         self.tabs = QTabWidget()
-
+        self.tabs.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         # Connection Tab
         self.connection_tab = QWidget()
         self.init_connection_tab()
@@ -321,6 +332,7 @@ class ETLApp(QMainWindow):
         self.tabs.addTab(self.query_tab, "Query Interface")
 
         self.setCentralWidget(self.tabs)
+
 
     def init_connection_tab(self):
         layout = QVBoxLayout()
@@ -563,6 +575,23 @@ class ETLApp(QMainWindow):
         layout.addLayout(self.add_to_existing_layout)
 
         self.table_creation_tab.setLayout(layout)
+
+    def resizeEvent(self, event):
+        """Переопределяем метод изменения размера для контроля максимальных размеров"""
+        screen_geometry = QApplication.primaryScreen().availableGeometry()
+        max_width = screen_geometry.width() * 0.9
+        max_height = screen_geometry.height() * 0.9
+
+        # Получаем новый размер из события
+        new_size = event.size()
+
+        # Корректируем размер, если он превышает максимальный
+        if new_size.width() > max_width or new_size.height() > max_height:
+            corrected_width = min(new_size.width(), max_width)
+            corrected_height = min(new_size.height(), max_height)
+            self.resize(int(corrected_width), int(corrected_height))
+        else:
+            super().resizeEvent(event)
 
     def init_field_mapping_tab(self):
         layout = QVBoxLayout()
